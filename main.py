@@ -39,7 +39,14 @@ class bloombergAPI():
         return num_finds, list_dicts_finds, bloomberg_ticker, query
 
     def get_bloomberg_financials(ticker: str):
-        """this method takes a bloomberg-ticker to get bloomberg data-strip-API financial data."""
-        url = f"https://www.bloomberg.com/markets2/api/datastrip/{tickre}?locale=en"
-        response_dict = moduleUtils.get_api(url)[0]
-        #not done. Left off here...
+        """this method takes a bloomberg-ticker to get bloomberg data-strip-API financial data. Returns dict with all the data"""
+        url = f"https://www.bloomberg.com/markets2/api/datastrip/{ticker}?locale=en"
+        response = requests.get(url)
+        dict(response_dict) = response.text[0]
+
+        return response_dict
+
+
+ticker = "TSLA:US"
+response = bloombergAPI.get_bloomberg_financials(ticker)
+print(response)
