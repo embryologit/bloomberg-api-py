@@ -47,6 +47,10 @@ class bloombergAPI():
         return response_dict
 
 
-ticker = "TSLA:US"
+
+query = "peloton"
+
+
+ticker = bloombergAPI.get_bloomberg_ticker(query)
 response = bloombergAPI.get_bloomberg_financials(ticker)
 print(response)
