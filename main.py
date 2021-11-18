@@ -32,17 +32,16 @@ class bloombergAPI():
         url = f"https://search.bloomberg.com/lookup.json?query={formatted_query}"
         response_dict = moduleUtils.get_api(url)
         num_finds = response_dict.get("total_results")
-        list_finds = response_dict.get("results")
         first_find_unformatted = response_dict.get("results")[0]
         bloomberg_ticker = response_dict.get("results")[0].get("ticker")
 
-        return num_finds, list_dicts_finds, bloomberg_ticker, query
+        return num_finds, first_find_unformatted, bloomberg_ticker, query
 
     def get_bloomberg_financials(ticker: str):
         """this method takes a bloomberg-ticker to get bloomberg data-strip-API financial data. Returns dict with all the data"""
         url = f"https://www.bloomberg.com/markets2/api/datastrip/{ticker}?locale=en"
         response = requests.get(url)
-        dict(response_dict) = response.text[0]
+        response_dict = response.text[0]
 
         return response_dict
 
@@ -51,6 +50,6 @@ class bloombergAPI():
 query = "peloton"
 
 
-ticker = bloombergAPI.get_bloomberg_ticker(query)
+num_finds, first_find_unformatted, ticker, query = bloombergAPI.get_bloomberg_ticker(query)
 response = bloombergAPI.get_bloomberg_financials(ticker)
 print(response)
