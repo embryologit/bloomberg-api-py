@@ -1,3 +1,9 @@
+#specific to project
+findata_responses/
+search_responsesfindata_responses/
+search_responses/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

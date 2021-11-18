@@ -1,5 +1,7 @@
 import requests
 import json
+from datetime import datetime
+import os
 
 REQUEST_HEADERS = {
     'authority': 'www.bloomberg.com',
@@ -17,26 +19,49 @@ REQUEST_HEADERS = {
     'if-none-match': 'W/"a43-hxXAwL51kj9ckR6Knjaq6P7qNF8"',
 }
 
+SEARCH_RESPONSE_SAVE_DIR = "search_responses"
+
+FINDATA_RESPONSE_SAVE_DIR = "findata_responses"
 
 class moduleUtils():
     """class name gives it away"""
 
     def save_bloomberg_ticker(ticker: str):
         """function to save the ticker for future financial-data-API requests. To skip the 
-        get_bloomberg_ticker() method when possible. Will be written to bloomberg_tickers.txt"""
+            get_bloomberg_ticker() method when possible. Will be written to bloomberg_tickers.txt"""
         pass
 
-    def get_api(url: str):
+    def get_api_no_header(url: str):
         """utils. gets and parses json-response. Yes, this is OOP hell"""
         response = requests.get(url)
         response_dict = response.json()
 
         return response_dict
 
-    def check_if_already_saved(ticker: str):
+    def check_if_query_already_saved(query: str):
         """takes bloomberg-ticker and checks, if bloomberg-search-API call is needed or ticker has been"""
         pass
 
+    def safe_save_jsondict(dir: str, json_dict: dict):
+        """archives response, even if dir isnt created yet."""
+        tag = datetime.now().strftime("%y%m%d_%H%M%S")
+        if os.path.exists(dir) == True:
+            with open(os.path.join(dir, f"{tag}.json"), "w") as f:
+                f.write(json.dumps(json_dict))
+        elif os.path.exists(dir) == False:
+            os.mkdir(dir)
+            with open(os.path.join(dir, f"{tag}.json"), "w") as f:
+                f.write(json.dumps(json_dict))
+
+
+    def save_json_response(json_response: dict, response_type: str):
+        """saves dict from API json response neatly. Second arg needs to be either "search" or "financial"."""
+        if response_type == "search":
+            moduleUtils.safe_save_jsondict(SEARCH_RESPONSE_SAVE_DIR, json_response)
+        elif response_type == "findata":
+            moduleUtils.safe_save_jsondict(FINDATA_RESPONSE_SAVE_DIR, json_response)
+        else:
+            print("save_json_response()   seems response_type doesn't fit.")
 
 class bloombergAPI():
     """core functions of the module"""
@@ -46,12 +71,12 @@ class bloombergAPI():
         specific finds, please consult list_dicts_finds output"""
         formatted_query = query.replace(" ", "%20")
         url = f"https://search.bloomberg.com/lookup.json?query={formatted_query}"
-        response_dict = moduleUtils.get_api(url)
+        response_dict = moduleUtils.get_api_no_header(url)
         num_finds = response_dict.get("total_results")
         first_find_unformatted = response_dict.get("results")[0]
         bloomberg_ticker = response_dict.get("results")[0].get("ticker_symbol")
 
-        return num_finds, first_find_unformatted, bloomberg_ticker, query
+        return num_finds, response_dict, first_find_unformatted, bloomberg_ticker, query
 
     def get_bloomberg_financials(ticker: str):
         """this method takes a bloomberg-ticker to get bloomberg data-strip-API financial data. Returns 
@@ -66,7 +91,8 @@ class bloombergAPI():
 query = "peloton"
 
 
-num_finds, first_find_unformatted, ticker, query = bloombergAPI.get_bloomberg_ticker(
-    query)
-response = bloombergAPI.get_bloomberg_financials(ticker)
-print(response)
+num_finds, search_response_unformatted, first_find_unformatted, ticker, query = bloombergAPI.get_bloomberg_ticker(query)
+findata_response = bloombergAPI.get_bloomberg_financials(ticker)
+print(findata_response)
+moduleUtils.save_json_response(search_response_unformatted, "search")
+moduleUtils.save_json_response(findata_response, "findata")

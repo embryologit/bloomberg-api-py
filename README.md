@@ -20,5 +20,5 @@ development has been halted because bloomberg.com is pretty good at blocking thi
 ## strategy/further steps
 - registry that saves response data from query search. This registry will be searched before an API-search is done to determine ticker for search query so that API-requests for already known search queries are avoided. Maybe this registry can be a relational database to seed more powerful local registry-searches (search-API returns multiple finds, each of which should be findable by multiple search queries)
 - request header customizations is in need of fresh cookies. Develop script, that can bake fresh cookies (and other perishable headers) and feeds them to the script by updating REQUEST_HEADERS constant. This script shall only be called when current cookie or other perishable&needed element expire.
-- cli functionality. typing query after "python3 bloomberg-findata.py" will turn on script to search for query.
+- cli functionality. typing query after "python3 bloomberg-api.py" will turn on script to search for query.
 - Actual output of this script should not just be the json-reponse in stdout but also a write to a database (for now csv)
