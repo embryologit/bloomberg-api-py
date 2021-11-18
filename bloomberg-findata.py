@@ -17,12 +17,13 @@ REQUEST_HEADERS = {
     'if-none-match': 'W/"a43-hxXAwL51kj9ckR6Knjaq6P7qNF8"',
 }
 
+
 class moduleUtils():
     """class name gives it away"""
 
-
     def save_bloomberg_ticker(ticker: str):
-        """function to save the ticker for future financial-data-API requests. To skip the get_bloomberg_ticker() method when possible. Will be written to bloomberg_tickers.txt"""
+        """function to save the ticker for future financial-data-API requests. To skip the 
+        get_bloomberg_ticker() method when possible. Will be written to bloomberg_tickers.txt"""
         pass
 
     def get_api(url: str):
@@ -37,14 +38,12 @@ class moduleUtils():
         pass
 
 
-
-
 class bloombergAPI():
     """core functions of the module"""
 
-
     def get_bloomberg_ticker(query: str):
-        """sends GET request to bloomberg.com search API with operator "query" as query. To find non-general, specific finds, please consult list_dicts_finds output"""
+        """sends GET request to bloomberg.com search API with operator "query" as query. To find non-general, 
+        specific finds, please consult list_dicts_finds output"""
         formatted_query = query.replace(" ", "%20")
         url = f"https://search.bloomberg.com/lookup.json?query={formatted_query}"
         response_dict = moduleUtils.get_api(url)
@@ -55,18 +54,19 @@ class bloombergAPI():
         return num_finds, first_find_unformatted, bloomberg_ticker, query
 
     def get_bloomberg_financials(ticker: str):
-        """this method takes a bloomberg-ticker to get bloomberg data-strip-API financial data. Returns dict with all the data"""
+        """this method takes a bloomberg-ticker to get bloomberg data-strip-API financial data. Returns 
+        dict with all the data"""
         url = f"https://www.bloomberg.com/markets2/api/datastrip/{ticker}?locale=en"
-        response = requests.get(url, headers = REQUEST_HEADERS)
+        response = requests.get(url, headers=REQUEST_HEADERS)
         response_dict = json.loads(response.text)[0]
 
         return response_dict
 
 
-
 query = "peloton"
 
 
-num_finds, first_find_unformatted, ticker, query = bloombergAPI.get_bloomberg_ticker(query)
+num_finds, first_find_unformatted, ticker, query = bloombergAPI.get_bloomberg_ticker(
+    query)
 response = bloombergAPI.get_bloomberg_financials(ticker)
 print(response)
